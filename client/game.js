@@ -11,6 +11,11 @@ kaboom({
 loadSprite("player", "sprites/player.png");
 loadSprite("wall", "sprites/wall.png");
 
+scene("login", () => {
+
+	go("game");
+})
+
 scene("game", () => {
 	const SPEED = 1200;
 	const BLOCK_SIZE = 20;
@@ -130,4 +135,4 @@ scene("game", () => {
 	}
 })
 
-go("game");
+go("login");
