@@ -4,14 +4,25 @@ import "github.com/gorilla/websocket"
 
 type MessageType int
 
+const (
+	MOVE MessageType = 0
+)
+
 type Message struct {
-	MessageType int64 `json:"messageType"`
-	Payload     interface{}
+	MessageType MessageType `json:"messageType"`
+	Payload     interface{} `json:"payload"`
 }
 
-type Room struct {
-	join      chan *websocket.Conn
-	leave     chan *websocket.Conn
+type Channel struct {
+	join      chan *Client
+	leave     chan *Client
 	broadcast chan Message
-	connMap   map[*websocket.Conn]bool
+	clients   map[*Client]bool
+}
+
+type Client struct {
+	uuid   string
+	conn   *websocket.Conn
+	action chan Message
+	send   chan Message
 }

@@ -7,6 +7,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var channel = newChannel()
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
 func main() {
 	port := "3333"
 	http.HandleFunc("/ws", socketHandler)
@@ -17,14 +26,6 @@ func main() {
 	}
 }
 
-var upgrader = websocket.Upgrader{
-	// ReadBufferSize:  1024,
-	// WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
 func socketHandler(w http.ResponseWriter, r *http.Request) {
 	var req Message
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -33,13 +34,20 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	client := newClient(conn)
+	channel.join <- client
+	defer leave(client)
+
 	go func() {
 		for {
 			if err := conn.ReadJSON(&req); err != nil {
 				return
 			}
 
-			conn.WriteJSON(Message{})
+			switch req.MessageType {
+			case MOVE:
+
+			}
 		}
 	}()
 }
