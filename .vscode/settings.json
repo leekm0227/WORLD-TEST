@@ -1,5 +1,17 @@
 {
     "gopls": {
         "experimentalWorkspaceModule": true,
+        },
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/Thumbs.db": true,
+            "**/.*": true,
+            "**/node_modules": true,
+            "**/ios": true,
+            "**/android": true,
         }
 }
