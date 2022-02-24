@@ -2,8 +2,8 @@
 h,displayHeight,windowWidth,windowHeight,height,width,dist,loadSound,loadImage,image,random,angleMode,RADIANS,DEGREES*/
 
 class Hero extends Mover {
-  constructor(imageArray) {
-    super(1, 1, 1, 1, 1, imageArray);
+  constructor(id, imageArray) {
+    super(id, 1, 1, 1, 1, 1, imageArray);
     this.x = 1;
     this.y = 1;
     this.newX = 1;
@@ -131,7 +131,7 @@ class Hero extends Mover {
       this.y = this.newY;
     }
   }
-  spawn(x, y) {
+  spawn(id, x, y) {
     // this.x = world[wld][lvl].spawnPoint.x;
     // this.y = world[wld][lvl].spawnPoint.y;
     // this.newX = world[wld][lvl].spawnPoint.x;
@@ -140,7 +140,7 @@ class Hero extends Mover {
     //   x: world[wld][lvl].spawnPoint.x,
     //   y: world[wld][lvl].spawnPoint.y
     // };
-
+    this.uid = id;
     this.x = x;
     this.y = y;
     this.newX = x;

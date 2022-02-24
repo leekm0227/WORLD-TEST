@@ -180,12 +180,8 @@ function titleScreen() {
   background("orange");
   stroke(0);
   fill(0);
-  textSize(30);
-  textFont("Press Start 2P");
-  textFont("Courier New");
   textFont(myFont);
   textAlign(CENTER);
-  text("Level " + wld + "-" + lvl, width * 0.5, height * 0.33);
   textSize(15);
   text("Click to Start", width * 0.5, height * 0.5);
   pop();
@@ -208,7 +204,9 @@ function showText() {
   textSize(11);
   textAlign(RIGHT)
   text("FPS: " + round(frameRateSum / frameCount), width - 5, 15);
-  text("World " + wld + "–" + lvl, width - 5, 25);
+  textSize(50);
+  textAlign(LEFT)
+  if (gameState == "ingame") text("HP : " + player.hp, 10, 50);
   pop()
 }
 
@@ -377,16 +375,24 @@ function connect() {
   ws.onopen = (e) => { console.log("on open: " + e) }
   ws.onclose = (e) => { console.log("on close: " + e) }
   ws.onmessage = (e) => {
-    console.log("on message: " + e.data)
     let msg = JSON.parse(e.data);
     let payload = msg.payload;
 
     switch (msg.messageType) {
       case messageType.INIT:
-        uid = payload.id;
+        // draw player
+        uid = payload.player.id;
         world = Level.buildLevels();
-        player = new Hero([images.hero1, images.hero2, images.hero3, images.hero4]);
-        player.spawn(payload.x, payload.y);
+        player = new Hero(uid, [images.hero1, images.hero2, images.hero3, images.hero4]);
+        player.hp = payload.player.hp
+        player.spawn(uid, payload.player.x, payload.player.y);
+
+        // draw other players
+        Object.keys(payload.players).map((id) => {
+          let player = payload.players[id]
+          spawn(id, player.x, player.y)
+        })
+
         resetCamera();
         document.getElementById("p5_loader").style.display = "none";
         break;
@@ -394,7 +400,12 @@ function connect() {
         move(payload.id, payload.x, payload.y);
         break;
       case messageType.JOIN:
-        if (uid != undefined && payload.id != uid) spawn(payload.id, payload.x, payload.y)
+        if (uid != undefined && payload.id != uid) {
+          spawn(payload.id, payload.x, payload.y)
+        }
+        break;
+      case messageType.LEAVE:
+        leave(payload.id)
         break;
     }
   }
@@ -404,7 +415,7 @@ function connect() {
 function spawn(id, x, y) {
   if (players[id] == undefined) {
     let w = world[0][0];
-    let player = new Mover(x, y, 1, 1, Sprite.randomDirection(), [images.cat1, images.cat2]);
+    let player = new Mover(id, x, y, 1, 1, Sprite.randomDirection(), [images.cat1, images.cat2]);
     players[id] = player;
     w.movers[y].push(player);
   }
@@ -414,5 +425,16 @@ function move(id, x, y) {
   if (players[id] instanceof Mover) {
     players[id].newX = x;
     players[id].newY = y;
+  }
+}
+
+function leave(id) {
+  if (players[id] instanceof Mover) {
+    let w = world[0][0];
+    w.movers.forEach(e => {
+      e.forEach((mover, i) => {
+        if (mover.uid == id) e.splice(i, 1);
+      })
+    });
   }
 }
