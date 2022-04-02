@@ -1,7 +1,8 @@
 package test
 
 import (
-	"AAA/src/server"
+	"AAA/src/server/world"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -12,9 +13,15 @@ const (
 	MAX
 )
 
-type Dummy struct {
-	conn   *websocket.Conn
-	player *server.Player
+type Bot struct {
+	conn    *websocket.Conn
+	player  *world.Player
+	receive chan world.Message
+}
+
+type Test struct {
+	sync.Mutex
+	uids []string
 }
 
 type ActionType int

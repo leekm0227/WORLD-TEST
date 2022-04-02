@@ -19,7 +19,7 @@ let gameState = "titlescreen";
 let host = "https://raw.githubusercontent.com/ohiofi/game-maps/master";
 let cameraRatio = 0.03;
 let fieldOfView = 11;
-let wsUrl = "ws://localhost:8888/ws"
+let wsUrl = "ws://localhost:8888/world"
 let ws;
 let x;
 let y;
