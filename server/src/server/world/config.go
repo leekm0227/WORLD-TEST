@@ -20,7 +20,7 @@ const (
 
 const (
 	MAX_SIZE         = 100
-	CHAN_BUFFER_SIZE = 100
+	CHAN_BUFFER_SIZE = 1000
 	X_MIN            = 0
 	X_MAX            = 20
 	Y_MIN            = 0

@@ -2,6 +2,7 @@ package world
 
 import (
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -133,7 +134,8 @@ func move(message Message) {
 		for client := range world.clientMap {
 			client.conn.WriteJSON(message)
 		}
-		log.Printf("%s, elapsed: %f", "move", float64(time.Now().UnixMilli())-payload["tx"].(float64))
+
+		logElapsed("move", payload)
 	}
 }
 
@@ -150,7 +152,8 @@ func attack(message Message) {
 			for client := range world.clientMap {
 				client.conn.WriteJSON(message)
 			}
-			log.Printf("%s, elapsed: %f", "attack", float64(time.Now().UnixMilli())-payload["tx"].(float64))
+
+			logElapsed("attack", payload)
 		} else {
 			for client := range world.clientMap {
 				if client.uuid == uuid {
@@ -164,8 +167,17 @@ func attack(message Message) {
 					MessageType: LEAVE,
 					Payload:     map[string]string{"id": client.uuid},
 				})
-				log.Printf("%s, elapsed: %f", "die", float64(time.Now().UnixMilli())-payload["tx"].(float64))
 			}
+
+			logElapsed("die", payload)
 		}
+	}
+}
+
+func logElapsed(key string, payload map[string]interface{}) {
+	if payload["tx"] != nil {
+		elapsed := math.Round(float64(time.Now().UnixMilli()) - payload["tx"].(float64))
+		delete(payload, "tx")
+		log.Printf("[elapsed: %0.0fms, %s]\tpayload: %+v", elapsed, key, payload)
 	}
 }
