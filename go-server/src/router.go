@@ -3,9 +3,9 @@ package server
 import (
 	"fmt"
 
-	"AAA/src/server/api"
-	"AAA/src/server/db"
-	"AAA/src/server/world"
+	"go-server/src/api"
+	"go-server/src/db"
+	"go-server/src/world"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"

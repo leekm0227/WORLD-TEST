@@ -4,11 +4,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"go-server/src/db"
 	"math/rand"
 	"net/http"
 	"time"
-
-	"AAA/src/server/db"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
