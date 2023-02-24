@@ -19,8 +19,8 @@ var world = World{
 	leave:     make(chan *Client, CHAN_BUFFER_SIZE),
 	move:      make(chan Message, CHAN_BUFFER_SIZE),
 	attack:    make(chan Message, CHAN_BUFFER_SIZE),
-	clientMap: make(map[*Client]bool),
-	playerMap: make(map[string]Player),
+	clientMap: make(map[*Client]bool, MAX_SIZE),
+	playerMap: make(map[string]Player, MAX_SIZE),
 }
 
 var upgrader = websocket.Upgrader{
@@ -52,6 +52,7 @@ func Handler(c *gin.Context) {
 
 	for {
 		if err := conn.ReadJSON(&req); err != nil {
+			log.Printf("read err: %s", err)
 			return
 		}
 
@@ -82,7 +83,7 @@ func Run() {
 func join(client *Client) {
 	player := Player{
 		Id: client.uuid,
-		Hp: 10,
+		Hp: 5,
 		X:  rand.Intn(X_MAX),
 		Y:  rand.Intn(Y_MAX),
 	}
@@ -135,7 +136,7 @@ func move(message Message) {
 			client.conn.WriteJSON(message)
 		}
 
-		logElapsed("move", payload)
+		// logElapsed("move", payload)
 	}
 }
 
@@ -146,31 +147,30 @@ func attack(message Message) {
 	if player, ok := world.playerMap[uuid]; ok {
 		player.Hp = player.Hp - 1
 
-		if player.Hp > 0 {
-			world.playerMap[uuid] = player
-			message.Payload.(map[string]interface{})["hp"] = player.Hp
-			for client := range world.clientMap {
-				client.conn.WriteJSON(message)
-			}
-
-			logElapsed("attack", payload)
-		} else {
-			for client := range world.clientMap {
-				if client.uuid == uuid {
-					client.conn.Close()
-					delete(world.clientMap, client)
-					delete(world.playerMap, client.uuid)
-					continue
-				}
-
-				client.conn.WriteJSON(Message{
-					MessageType: LEAVE,
-					Payload:     map[string]string{"id": client.uuid},
-				})
-			}
-
-			logElapsed("die", payload)
+		message.Payload.(map[string]interface{})["hp"] = player.Hp
+		for client := range world.clientMap {
+			client.conn.WriteJSON(message)
 		}
+
+		// if player.Hp > 0 {
+		// 	world.playerMap[uuid] = player
+		// 	message.Payload.(map[string]interface{})["hp"] = player.Hp
+		// 	for client := range world.clientMap {
+		// 		client.conn.WriteJSON(message)
+		// 	}
+
+		// 	// logElapsed("attack", payload)
+		// } else {
+		// 	delete(world.playerMap, uuid)
+		// 	for client := range world.clientMap {
+		// 		client.conn.WriteJSON(Message{
+		// 			MessageType: DIE,
+		// 			Payload:     map[string]string{"id": player.Id},
+		// 		})
+		// 	}
+
+		// 	// logElapsed("died", payload)
+		// }
 	}
 }
 

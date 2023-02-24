@@ -206,7 +206,10 @@ function showText() {
   text("FPS: " + round(frameRateSum / frameCount), width - 5, 15);
   textSize(50);
   textAlign(LEFT)
-  if (gameState == "ingame") text("HP : " + player.hp, 10, 50);
+  if (gameState == "ingame") {
+    text("HP : " + player.hp, 10, 50);
+    text("CNT : " + Object.keys(players).length, 10, 100);
+  }
   pop()
 }
 

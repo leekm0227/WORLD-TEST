@@ -37,5 +37,5 @@ func Run(port string) {
 
 	// WS
 	router.GET("/world", world.Handler)
-	router.Run(fmt.Sprintf("localhost:%s", port))
+	router.Run(fmt.Sprintf("0.0.0.0:%s", port))
 }

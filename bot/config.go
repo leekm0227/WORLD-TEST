@@ -2,6 +2,7 @@ package main
 
 import (
 	"sync"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -12,9 +13,10 @@ const (
 )
 
 type Bot struct {
-	conn    *websocket.Conn
-	player  *Player
-	receive chan Message
+	conn     *websocket.Conn
+	playable bool
+	player   *Player
+	receive  chan Message
 }
 
 type Test struct {
@@ -45,14 +47,15 @@ const (
 	INIT   MessageType = 2
 	MOVE   MessageType = 3
 	ATTACK MessageType = 4
+	DIE    MessageType = 5
 
 	UP    Direction = 0
 	DOWN  Direction = 1
 	LEFT  Direction = 2
 	RIGHT Direction = 3
 
-	X_MIN            = 0
-	X_MAX            = 20
-	Y_MIN            = 0
-	Y_MAX            = 20
+	X_MIN = 0
+	X_MAX = 20
+	Y_MIN = 0
+	Y_MAX = 20
 )

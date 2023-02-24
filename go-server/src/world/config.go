@@ -11,6 +11,7 @@ const (
 	INIT   MessageType = 2
 	MOVE   MessageType = 3
 	ATTACK MessageType = 4
+	DIE    MessageType = 5
 
 	UP    Direction = 0
 	DOWN  Direction = 1
@@ -19,7 +20,7 @@ const (
 )
 
 const (
-	MAX_SIZE         = 100
+	MAX_SIZE         = 500
 	CHAN_BUFFER_SIZE = 1000
 	X_MIN            = 0
 	X_MAX            = 20
